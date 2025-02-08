@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Papers</title>
+    <script src="https://unpkg.com/htmx.org"></script>
+    <link href="{{url_for('static',path='/css/app.css')}}" rel="stylesheet" />
+    <script>
+        function adjustDate(days) {
+            let dateInput = document.getElementById("date");
+            let currentDate = new Date(dateInput.value);
+
+            // Adjust the date
+            currentDate.setDate(currentDate.getDate() + days);
+
+            // Format to yyyy-mm-dd
+            let newDate = currentDate.toISOString().split('T')[0];
+
+            // Update the input field
+            dateInput.value = newDate;
+
+            // Update the URL without reloading the page
+            let newUrl = window.location.pathname + "?date=" + newDate;
+            history.pushState(null, "", newUrl);
+
+            // Trigger HTMX request to fetch updated papers
+            dateInput.dispatchEvent(new Event("change"));
+        }
+        function resetToBaseUrl() {
+            let baseUrl = window.location.pathname; // Get "/"
+            history.pushState(null, "", baseUrl); // Update URL without reload
+            location.reload(); // Refresh to load today's papers
+        }
+    </script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+    <!-- Header -->
+    <header class="bg-blue-600 text-white py-4 shadow-md">
+        <div class="max-w-4xl mx-auto px-4">
+            <h1 class="text-2xl font-bold cursor-pointer inline-block hover:text-gray-200 transition"
+                onclick="resetToBaseUrl()">📑 Daily Research Papers</h1>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg mt-6">
+        
+        <div class="flex items-center space-x-2">
+            <!-- Previous Day Button -->
+            <button onclick="adjustDate(-1)" class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-md shadow">
+                ⬅ Previous Day
+            </button>
+
+            <!-- Date Picker -->
+            <input type="date" id="date" name="date"
+                class="p-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                hx-get="/papers" hx-trigger="change" hx-target="#paper-list" hx-swap="innerHTML"
+                value="{{ selected_date }}">
+
+            <!-- Next Day Button -->
+            <button onclick="adjustDate(1)" class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-md shadow">
+                Next Day ➡
+            </button>
+        </div>
+
+        <!-- Paper List Section -->
+        <div id="paper-list">
+            {% include "paper_list.html" %}
+        </div>
+    </main>
+
+</body>
+</html>

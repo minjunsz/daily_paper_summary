@@ -1,0 +1,7 @@
+<div class="prose prose-sm prose-blue max-w-none bg-gray-100 p-4 rounded-md border border-gray-300">
+    {% if tab == "summary" %}
+        {{ paper.summary | markdown | safe }}
+    {% elif tab == "translate" %}
+        {{ paper.translate | markdown | safe }}
+    {% endif %}
+</div>

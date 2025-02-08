@@ -1,0 +1,55 @@
+<div id="paper-details-{{ paper.id }}" class="bg-white shadow-md rounded-lg p-6 border border-gray-200">
+    <!-- Tab Buttons -->
+    <div class="flex space-x-2 border-b pb-2">
+        <button hx-get="/paper/{{ paper.id }}?tab=summary" 
+                hx-target="#paper-details-{{ paper.id }}"
+                hx-swap="outerHTML"
+                class="px-4 py-2 w-1/2 text-center font-medium rounded-t-lg transition
+                {% if tab == 'summary' %} bg-blue-500 text-white hover:brightness-90 {% else %} bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900 {% endif %}">
+            📜 Summary
+        </button>
+        {% if paper.translate %}
+            <button hx-get="/paper/{{ paper.id }}?tab=translate" 
+                    hx-target="#paper-details-{{ paper.id }}"
+                    hx-swap="outerHTML"
+                    class="px-4 py-2 w-1/2 text-center font-medium rounded-t-lg transition
+                    {% if tab == 'translate' %} bg-blue-500 text-white hover:brightness-90 {% else %} bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900 {% endif %}">
+                🇰🇷 한국어 번역
+            </button>
+        {% endif %}
+    </div>
+
+    <!-- Content Area (HTMX will swap this) -->
+    <div class="mt-4">
+        <div class="prose prose-sm prose-blue max-w-none bg-gray-100 p-4 rounded-md border border-gray-300">
+            {% if tab == "summary" %}
+                {{ paper.summary | markdown | safe }}
+            {% elif tab == "translate" %}
+                {{ paper.translate | markdown | safe }}
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Minor Keywords -->
+    {% if paper.minor_topics %}
+        <div class="mt-4">
+            <h3 class="text-lg font-medium text-gray-800">🔑 Minor Keywords</h3>
+            <div class="flex flex-wrap gap-2 mt-2">
+                {% for keyword in paper.minor_topics %}
+                    <span class="bg-blue-100 text-blue-700 text-sm font-medium px-2 py-1 rounded-full">
+                        {{ keyword }}
+                    </span>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Paper Link + Read More -->
+    <div class="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between mx-2">
+        <h3 class="text-lg font-medium text-gray-800 mb-2 sm:mb-0">🔗 Read More</h3>
+        <a href="{{ paper.link }}" target="_blank" 
+           class="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 transition text-center">
+            📖 Open Paper
+        </a>
+    </div>
+</div>
