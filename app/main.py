@@ -8,6 +8,9 @@ from fastapi.responses import HTMLResponse
 from datetime import datetime
 from supabase import create_client, Client
 import markdown
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Load Supabase Credentials
 SUPABASE_URL = os.getenv("SUPABASE_URL")
